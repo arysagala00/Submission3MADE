@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Movie Catalogue</string>
+
+    <string name="tab1">Movie</string>
+    <string name="tab2">TV Shows</string>
+
+    <string name="title">Title</string>
+    <string name="rating">Rating</string>
+    <string name="year">Year</string>
+    <string name="description">Description</string>
+    <string name="setting">Setting</string>
+    <string name="chosen">You choose </string>
+</resources>

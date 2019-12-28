@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Katalog Film</string>
+
+    <string name="tab1">Film</string>
+    <string name="tab2">Siaran TV</string>
+
+    <string name="title">Judul</string>
+    <string name="rating">Peringkat</string>
+    <string name="year">Tahun</string>
+    <string name="description">Deskripsi</string>
+    <string name="setting">Pengaturan</string>
+    <string name="chosen">Kamu memilih </string>
+</resources>
