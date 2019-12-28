@@ -27,6 +27,10 @@ class MovieFragment : Fragment() {
 
     private val list = ArrayList<Movie>()
 
+    companion object{
+        private const val STATE_LIST = "state_list"
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,22 +42,40 @@ class MovieFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val handler = Handler()
+        rv_list.setHasFixedSize(true)
 
-        rv_list.visibility = View.GONE
+        when(savedInstanceState){
+            null -> {
+                val handler = Handler()
 
-        handler.postDelayed({
-            getData()
-        },3000)
+                rv_list.visibility = View.GONE
+
+                handler.postDelayed({
+                    getData()
+                },3000)
+            }
+
+            else -> {
+                val stateList = savedInstanceState.getParcelableArrayList<Movie>(STATE_LIST)
+
+                if(stateList != null){
+                    list.addAll(stateList)
+                }
+            }
+        }
+
+
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelableArrayList(STATE_LIST, list)
     }
 
     private fun getData(){
         rv_list.layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
-
         val listMovieAdapter = ListMovieAdapter(list)
         rv_list.adapter = listMovieAdapter
-
-        rv_list.setHasFixedSize(true)
 
         val url = "https://api.themoviedb.org/3/discover/movie?api_key=07fc7d411ee3ae0037267e38d68e091c&language=en-US"
 
