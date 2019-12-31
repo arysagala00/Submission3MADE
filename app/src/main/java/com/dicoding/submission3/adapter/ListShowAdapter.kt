@@ -9,8 +9,17 @@ import com.dicoding.submission3.R
 import com.dicoding.submission3.model.TvShow
 import kotlinx.android.synthetic.main.item_row_show.view.*
 
-class ListShowAdapter(private val listShow:ArrayList<TvShow>) : RecyclerView.Adapter<ListShowAdapter.ListViewHolder>() {
+class ListShowAdapter() : RecyclerView.Adapter<ListShowAdapter.ListViewHolder>() {
+
+    private val listShow = ArrayList<TvShow>()
+
     private var onItemClickCallback: OnItemClickCallback? = null
+
+    fun setData(items:ArrayList<TvShow>){
+        listShow.clear()
+        listShow.addAll(items)
+        notifyDataSetChanged()
+    }
 
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback){
         this.onItemClickCallback = onItemClickCallback
@@ -39,12 +48,12 @@ class ListShowAdapter(private val listShow:ArrayList<TvShow>) : RecyclerView.Ada
                 year_tv.text = year.substring(0,4)
                 description_tv.text = show.description
 
-                itemView.setOnClickListener{onItemClickCallback?.OnItemClicked(show)}
+                itemView.setOnClickListener{onItemClickCallback?.onItemClicked(show)}
             }
         }
     }
 
     interface OnItemClickCallback {
-        fun OnItemClicked(data:TvShow)
+        fun onItemClicked(data:TvShow)
     }
 }

@@ -10,6 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.Request
 import com.android.volley.Response
@@ -20,16 +23,14 @@ import com.dicoding.submission3.R
 import com.dicoding.submission3.activity.DetailFilmActivity
 import com.dicoding.submission3.adapter.ListMovieAdapter
 import com.dicoding.submission3.model.Movie
+import com.dicoding.submission3.viewmodel.MovieViewModel
 import kotlinx.android.synthetic.main.fragment_movie.*
 import org.json.JSONObject
 
-class MovieFragment : Fragment() {
+class MovieFragment : Fragment(),LifecycleOwner {
 
-    private val list = ArrayList<Movie>()
-
-    companion object{
-        private const val STATE_LIST = "state_list"
-    }
+    private lateinit var adapter: ListMovieAdapter
+    private lateinit var movieViewModel: MovieViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,78 +43,45 @@ class MovieFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        rv_list.setHasFixedSize(true)
+        val handler = Handler()
 
-        when(savedInstanceState){
-            null -> {
-                val handler = Handler()
+        adapter = ListMovieAdapter()
+        adapter.notifyDataSetChanged()
 
-                rv_list.visibility = View.GONE
-
-                handler.postDelayed({
-                    getData()
-                },3000)
-            }
-
-            else -> {
-                val stateList = savedInstanceState.getParcelableArrayList<Movie>(STATE_LIST)
-
-                if(stateList != null){
-                    list.addAll(stateList)
-                }
-            }
-        }
-
-
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList(STATE_LIST, list)
-    }
-
-    private fun getData(){
         rv_list.layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
-        val listMovieAdapter = ListMovieAdapter(list)
-        rv_list.adapter = listMovieAdapter
+        rv_list.adapter = adapter
 
-        val url = "https://api.themoviedb.org/3/discover/movie?api_key=07fc7d411ee3ae0037267e38d68e091c&language=en-US"
+        movieViewModel = ViewModelProvider(this,ViewModelProvider.NewInstanceFactory()).get(MovieViewModel::class.java)
 
-        val request = StringRequest(
-            Request.Method.GET,
-            url,
-            Response.Listener { res ->
-                var it = JSONObject(res)
-                Log.d("JSON",res)
-                for(i in 0 until it.getJSONArray("results").length()){
-                    val result = it.getJSONArray("results")[i] as JSONObject
-                    val name = result.getString("title")
-                    val description = result.getString("overview")
-                    val rating = result.getString("vote_average")
-                    val photo = "https://image.tmdb.org/t/p/w342"+result.getString("poster_path")
-                    val year = result.getString("release_date")
+        handler.postDelayed({
+            movieViewModel.setMovie()
+            showLoading(true)
+        },1000)
 
-                    list.add(Movie(photo,name,description,rating,year))
-                }
+        movieViewModel.getMovie().observe(viewLifecycleOwner, Observer {movieItems  ->
+            if(movieItems!=null){
+                adapter.setData(movieItems)
+                showLoading(false)
+            }
+        })
 
-                listMovieAdapter.notifyDataSetChanged()
-            },
-            Response.ErrorListener {
-
-            })
-
-        val queue = Volley.newRequestQueue(activity?.applicationContext)
-        queue.add(request)
-
-        rv_list.visibility = View.VISIBLE
-        pbMovie.visibility = View.GONE
-
-        listMovieAdapter.setOnItemClickCallback(object : ListMovieAdapter.OnItemClickCallback{
-            override fun OnItemClicked(data: Movie) {
+        adapter.setOnItemClickCallback(object : ListMovieAdapter.OnItemClickCallback{
+            override fun onItemClicked(data: Movie) {
                 showSelectedMovie(data)
             }
         })
     }
+
+    private fun showLoading(state: Boolean){
+        if(state){
+            pbMovie.visibility = View.VISIBLE
+        }
+        else{
+            pbMovie.visibility = View.GONE
+        }
+    }
+
+
 
     private fun showSelectedMovie(movie:Movie){
         Toast.makeText(context,context?.getString(R.string.chosen)+" ${movie.name}", Toast.LENGTH_SHORT).show()

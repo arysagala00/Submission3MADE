@@ -9,8 +9,17 @@ import com.dicoding.submission3.R
 import com.dicoding.submission3.model.Movie
 import kotlinx.android.synthetic.main.item_row_movie.view.*
 
-class ListMovieAdapter(private val listMovie:ArrayList<Movie>) : RecyclerView.Adapter<ListMovieAdapter.ListViewHolder>() {
+class ListMovieAdapter() : RecyclerView.Adapter<ListMovieAdapter.ListViewHolder>() {
+
+    private val listMovie = ArrayList<Movie>()
+
     private var onItemClickCallback: OnItemClickCallback? = null
+
+    fun setData(items:ArrayList<Movie>){
+        listMovie.clear()
+        listMovie.addAll(items)
+        notifyDataSetChanged()
+    }
 
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback){
         this.onItemClickCallback = onItemClickCallback
@@ -39,12 +48,12 @@ class ListMovieAdapter(private val listMovie:ArrayList<Movie>) : RecyclerView.Ad
                 txt_year.text = year.substring(0,4)
                 txt_description.text = movie.description
 
-                itemView.setOnClickListener{onItemClickCallback?.OnItemClicked(movie)}
+                itemView.setOnClickListener{onItemClickCallback?.onItemClicked(movie)}
             }
         }
     }
 
     interface OnItemClickCallback {
-        fun OnItemClicked(data:Movie)
+        fun onItemClicked(data:Movie)
     }
 }
