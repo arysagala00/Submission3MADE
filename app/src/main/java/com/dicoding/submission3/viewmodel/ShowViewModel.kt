@@ -12,7 +12,7 @@ import java.lang.Exception
 
 class ShowViewModel : ViewModel() {
     companion object{
-        private const val API_KEY = "07fc7d411ee3ae0037267e38d68e091c"
+        private const val API_KEY = ""
     }
 
     val listShow = MutableLiveData<ArrayList<TvShow>>()

@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_tv_show.*
 
 class TvShowFragment : Fragment(),LifecycleOwner {
 
-    private lateinit var adapter: ListShowAdapter
+    private lateinit var adapterShow: ListShowAdapter
     private lateinit var showViewModel: ShowViewModel
 
     override fun onCreateView(
@@ -32,7 +32,7 @@ class TvShowFragment : Fragment(),LifecycleOwner {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movie, container, false)
+        return inflater.inflate(R.layout.fragment_tv_show, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,11 +40,11 @@ class TvShowFragment : Fragment(),LifecycleOwner {
 
         val handler = Handler()
 
-        adapter = ListShowAdapter()
-        adapter.notifyDataSetChanged()
+        adapterShow = ListShowAdapter()
+        adapterShow.notifyDataSetChanged()
 
         rv_show.layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
-        rv_show.adapter = adapter
+        rv_show.adapter = adapterShow
 
         showViewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(ShowViewModel::class.java)
 
@@ -55,12 +55,12 @@ class TvShowFragment : Fragment(),LifecycleOwner {
 
         showViewModel.getShow().observe(viewLifecycleOwner, Observer {showItems  ->
             if(showItems!=null){
-                adapter.setData(showItems)
+                adapterShow.setData(showItems)
                 showLoading(false)
             }
         })
 
-        adapter.setOnItemClickCallback(object : ListShowAdapter.OnItemClickCallback{
+        adapterShow.setOnItemClickCallback(object : ListShowAdapter.OnItemClickCallback{
             override fun onItemClicked(data: TvShow) {
                 showSelectedShow(data)
             }

@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.activity_detail_film.*
 class DetailFilmActivity : AppCompatActivity() {
 
     companion object{
-        var EXTRA_MOVIES = "extra_movies"
+        const val EXTRA_MOVIES = "extra_movies"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
